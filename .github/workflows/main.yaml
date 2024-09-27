@@ -1,0 +1,27 @@
+name: tp action
+on: push
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: login dockerhub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+      - name: checkout code
+        uses: actions/checkout@v4
+
+      - name: Build docker image vote
+        run: docker build -t elmcode/vote:latest ./github-actions/Tp/vote
+      - name: Build docker image result
+        run: docker build -t elmcode/result:latest ./github-actions/Tp/result
+      - name: Build docker image worker
+        run: docker build -t elmcode/worker:latest ./github-actions/Tp/worker
+
+      - name: push docker image vote
+        run: docker push elmcode/vote:latest
+      - name: push docker image result
+        run: docker push elmcode/result:latest
+      - name: push docker image worker
+        run: docker push elmcode/worker:latest
